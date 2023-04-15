@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { Highlighter } from '.';
 
 	export let highlighter: Highlighter;
@@ -9,28 +10,25 @@
 	let container: HTMLDivElement;
 	let template: HTMLTemplateElement;
 
-	$: if (container && template) {
-		// ref. https://developer.chrome.com/articles/declarative-shadow-dom/#polyfill
-		const shadowRoot = container.attachShadow({ mode: 'open' });
-		shadowRoot.appendChild(template.content);
-		template.remove();
-	}
 	$: {
-		highlighter.highlight(code, language).then((codeHtml) => {
+		highlighter.highlight(code, language, theme).then(({ html, stylesheet }) => {
 			const codeElement = container.shadowRoot?.querySelector('code');
 			if (codeElement) {
-				codeElement.innerHTML = codeHtml;
+				codeElement.innerHTML = html;
 			}
-		});
-	}
-	$: {
-		highlighter.getStylesheet(theme).then((stylesheet) => {
 			const styleElement = container.shadowRoot?.querySelector('style');
 			if (styleElement) {
 				styleElement.textContent = stylesheet;
 			}
 		});
 	}
+
+	onMount(() => {
+		// ref. https://developer.chrome.com/articles/declarative-shadow-dom/#polyfill
+		const shadowRoot = container.attachShadow({ mode: 'open' });
+		shadowRoot.appendChild(template.content);
+		template.remove();
+	});
 </script>
 
 <div bind:this={container}>
