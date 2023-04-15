@@ -8,7 +8,7 @@ function getSupportedLanguages(): LanguageList {
 }
 
 function getThemes(): ThemeList {
-	return [];
+	return [{ name: 'Default', theme: 'default' }];
 }
 
 async function highlight(code: string, language: string, theme?: string): Promise<HighlightResult> {
