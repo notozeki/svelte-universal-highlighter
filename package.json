@@ -25,6 +25,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"highlight.js": "^11.7.0",
 		"prismjs": "^1.29.0"
 	}
 }
