@@ -1,3 +1,4 @@
+import { createGptHighlighter } from './highlighters/gpt';
 import { createHighlightjsHighlighter } from './highlighters/highlightjs';
 import { createPrismHighlighter } from './highlighters/prism';
 
@@ -15,5 +16,5 @@ export interface Highlighter {
 }
 
 export function getHighlighters(): Highlighter[] {
-	return [createPrismHighlighter(), createHighlightjsHighlighter()];
+	return [createPrismHighlighter(), createHighlightjsHighlighter(), createGptHighlighter()];
 }
