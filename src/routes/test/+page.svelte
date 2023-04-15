@@ -1,11 +1,19 @@
 <script lang="ts">
 	import Highlight from '$lib/highlight/Highlight.svelte';
-	import { getHighlighters } from '$lib/highlight';
+	import { getHighlighters, type Highlighter, type LanguageList } from '$lib/highlight';
 
-	const highlighter = getHighlighters()[0];
-	const languages = highlighter.getSupportedLanguages();
+	const highlighters = getHighlighters();
 
-	let language = languages[0].language;
+  let highlighter = highlighters[0];
+  let languages: LanguageList;
+  let language: string;
+
+  $: { initHighlighter(highlighter); }
+
+  const initHighlighter = (highlighter: Highlighter) => {
+    languages = highlighter.getSupportedLanguages();
+    language = languages[0].language;
+  };
 
 	// Sample code from https://github.com/mdn/web-components-examples/blob/main/popup-info-box-web-component/main.js
 	const code = `// Create a class for the element
@@ -87,6 +95,12 @@ class PopUpInfo extends HTMLElement {
 // Define the new element
 customElements.define('popup-info', PopUpInfo);`;
 </script>
+
+<select bind:value={highlighter}>
+	{#each highlighters as item}
+		<option value={item}>{item.name}</option>
+	{/each}
+</select>
 
 <select bind:value={language}>
 	{#each languages as item}
