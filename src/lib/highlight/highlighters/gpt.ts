@@ -1,7 +1,5 @@
+import { generateColorMapping, tokenize, type Token } from '$lib/gpt';
 import type { HighlightResult, Highlighter, LanguageList, ThemeList } from '..';
-
-// TEMP
-type Token = { type: string; value: string };
 
 function getSupportedLanguages(): LanguageList {
 	return [{ name: '(Automatic)', language: '__auto__' }];
@@ -14,9 +12,12 @@ function getThemes(): ThemeList {
 	];
 }
 
-async function highlight(code: string, language: string, theme?: string): Promise<HighlightResult> {
-	// TODO
-	const tokens: Token[] = [{ type: 'none', value: code }];
+async function highlight(
+	code: string,
+	_language: string,
+	theme?: string
+): Promise<HighlightResult> {
+	const tokens = await tokenize(code);
 	const html = renderTokens(tokens);
 	const stylesheet = await getStylesheet(
 		tokens.map(({ type }) => type),
@@ -26,20 +27,20 @@ async function highlight(code: string, language: string, theme?: string): Promis
 }
 
 async function getStylesheet(tokenTypes: string[], theme: string = 'random'): Promise<string> {
+	let mapping: Record<string, string> = {};
 	if (theme === 'random') {
-		return tokenTypes
-			.map((type) => {
-				const hue = Math.random();
-				const saturation = Math.random();
-				return `.${type} { color: hsl(${hue}turn, ${saturation * 100}%, 50%); }`;
-			})
-			.join('');
+		for (const type of tokenTypes) {
+			const hue = Math.random();
+			const saturation = Math.random();
+			mapping[type] = `hsl(${hue}turn, ${saturation * 100}%, 50%)`;
+		}
 	} else if (theme === 'gpt') {
-		// TODO
-		return '';
-	} else {
-		return '';
+		mapping = await generateColorMapping(tokenTypes);
 	}
+
+	return Object.keys(mapping)
+		.map((type) => `.${type} { color: ${mapping[type]}; }`)
+		.join('\n');
 }
 
 function renderTokens(tokens: Token[]): string {
