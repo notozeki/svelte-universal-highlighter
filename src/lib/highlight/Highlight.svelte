@@ -1,6 +1,12 @@
+<script context="module" lang="ts">
+	export type HighlightState = 'done' | 'loading';
+</script>
+
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import type { Highlighter } from '.';
+
+	const dispatch = createEventDispatcher<{ changeState: HighlightState }>();
 
 	export let highlighter: Highlighter;
 	export let code: string;
@@ -11,6 +17,7 @@
 	let template: HTMLTemplateElement;
 
 	$: {
+		dispatch('changeState', 'loading');
 		highlighter.highlight(code, language, theme).then(({ html, stylesheet }) => {
 			const codeElement = container.shadowRoot?.querySelector('code');
 			if (codeElement) {
@@ -20,6 +27,7 @@
 			if (styleElement) {
 				styleElement.textContent = stylesheet;
 			}
+			dispatch('changeState', 'done');
 		});
 	}
 
