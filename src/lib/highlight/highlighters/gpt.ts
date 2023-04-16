@@ -1,6 +1,8 @@
 import { generateColorMapping, tokenize, type Token } from '$lib/gpt';
 import type { HighlightResult, Highlighter, LanguageList, ThemeList } from '..';
 
+const tokenCache = new Map<string, Token[]>();
+
 function getSupportedLanguages(): LanguageList {
 	return [{ name: '(Automatic)', language: '__auto__' }];
 }
@@ -17,7 +19,15 @@ async function highlight(
 	_language: string,
 	theme?: string
 ): Promise<HighlightResult> {
-	const tokens = await tokenize(code);
+	const cacheKey = await sha1(code);
+	const cached = tokenCache.get(cacheKey);
+	let tokens;
+	if (cached) {
+		tokens = cached;
+	} else {
+		tokens = await tokenize(code);
+		tokenCache.set(cacheKey, tokens);
+	}
 
 	// // for test
 	// const tokens = [
@@ -99,4 +109,12 @@ function escape(str: string): string {
 
 export function createGptHighlighter(): Highlighter {
 	return { name: 'GPT', getSupportedLanguages, getThemes, highlight };
+}
+
+async function sha1(str: string): Promise<string> {
+	const data = new TextEncoder().encode(str);
+	const arrayBuffer = await crypto.subtle.digest('SHA-1', data);
+	return Array.from(new Uint8Array(arrayBuffer))
+		.map((b) => b.toString(16).padStart(2, '0'))
+		.join('');
 }
