@@ -1,5 +1,7 @@
 import * as Prism from 'prismjs';
-import type { Highlighter, LanguageList, ThemeList } from '..';
+import type { HighlightResult, Highlighter, LanguageList, ThemeList } from '..';
+
+const stylesheetCache = new Map<string, string>();
 
 function getSupportedLanguages(): LanguageList {
 	const metaKeys = ['extend', 'insertBefore'];
@@ -9,21 +11,30 @@ function getSupportedLanguages(): LanguageList {
 }
 
 function getThemes(): ThemeList {
-	return [];
+	return [{ name: 'Default', theme: 'default' }];
 }
 
-async function highlight(code: string, language: string): Promise<string> {
+async function highlight(code: string, language: string, theme?: string): Promise<HighlightResult> {
 	const grammer = Prism.languages[language];
 	if (!grammer) {
 		throw new Error(`Unsupported language: ${language}`);
 	}
-	return Prism.highlight(code, grammer, language);
+	const html = Prism.highlight(code, grammer, language);
+	const stylesheet = await getStylesheet(theme);
+	return { html, stylesheet };
 }
 
-async function getStylesheet(theme?: string): Promise<string> {
+async function getStylesheet(theme: string = 'default'): Promise<string> {
+	const cached = stylesheetCache.get(theme);
+	if (cached !== undefined) {
+		return cached;
+	}
+
 	const res = await fetch('https://unpkg.com/prismjs@v1.x/themes/prism.css');
 	if (res.ok) {
-		return await res.text();
+		const stylesheet = await res.text();
+		stylesheetCache.set(theme, stylesheet);
+		return stylesheet;
 	} else {
 		console.error(`Faild to load Prism theme with ${res.status}`);
 		return '';
@@ -31,5 +42,5 @@ async function getStylesheet(theme?: string): Promise<string> {
 }
 
 export function createPrismHighlighter(): Highlighter {
-	return { name: 'Prism', getSupportedLanguages, getThemes, highlight, getStylesheet };
+	return { name: 'Prism', getSupportedLanguages, getThemes, highlight };
 }

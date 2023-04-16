@@ -1,11 +1,26 @@
 <script lang="ts">
-	import Highlight from '$lib/highlight/Highlight.svelte';
-	import { getHighlighters } from '$lib/highlight';
+	import Highlight, { type HighlightState } from '$lib/highlight/Highlight.svelte';
+	import { getHighlighters, type Highlighter, type LanguageList, type ThemeList } from '$lib/highlight';
 
-	const highlighter = getHighlighters()[0];
-	const languages = highlighter.getSupportedLanguages();
+	const highlighters = getHighlighters();
 
-	let language = languages[0].language;
+	let highlighter = highlighters[0];
+	let languages: LanguageList;
+  let themes: ThemeList;
+	let language: string;
+  let theme: string;
+	let state: HighlightState = 'done';
+
+	$: {
+		initHighlighter(highlighter);
+	}
+
+	const initHighlighter = (highlighter: Highlighter) => {
+		languages = highlighter.getSupportedLanguages();
+    themes = highlighter.getThemes();
+		language = languages[0].language;
+    theme = themes[0].theme;
+	};
 
 	// Sample code from https://github.com/mdn/web-components-examples/blob/main/popup-info-box-web-component/main.js
 	const code = `// Create a class for the element
@@ -88,10 +103,30 @@ class PopUpInfo extends HTMLElement {
 customElements.define('popup-info', PopUpInfo);`;
 </script>
 
-<select bind:value={language}>
-	{#each languages as item}
-		<option value={item.language}>{item.name}</option>
-	{/each}
-</select>
+<div style:opacity={state === 'loading' ? 0.5 : 1}>
+	<select bind:value={highlighter}>
+		{#each highlighters as item}
+			<option value={item}>{item.name}</option>
+		{/each}
+	</select>
 
-<Highlight {highlighter} {language} {code} />
+	<select bind:value={language}>
+		{#each languages as item}
+			<option value={item.language}>{item.name}</option>
+		{/each}
+	</select>
+
+  <select bind:value={theme}>
+		{#each themes as item}
+			<option value={item.theme}>{item.name}</option>
+		{/each}
+	</select>
+
+	<Highlight
+		{highlighter}
+		{language}
+    {theme}
+		{code}
+		on:changeState={(event) => (state = event.detail)}
+	/>
+</div>

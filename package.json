@@ -17,6 +17,7 @@
 		"@types/prismjs": "^1.26.0",
 		"autoprefixer": "^10.4.14",
 		"postcss": "^8.4.21",
+		"openai": "^3.2.1",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.8.1",
 		"svelte": "^3.54.0",
@@ -28,6 +29,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"highlight.js": "^11.7.0",
 		"prismjs": "^1.29.0"
 	}
 }
