@@ -1,15 +1,22 @@
 <script lang="ts">
 	import Highlight, { type HighlightState } from '$lib/highlight/Highlight.svelte';
-	import { getHighlighters, type Highlighter, type LanguageList, type ThemeList } from '$lib/highlight';
+	import {
+		getHighlighters,
+		type Highlighter,
+		type LanguageList,
+		type ThemeList
+	} from '$lib/highlight';
 
 	const highlighters = getHighlighters();
 
 	let highlighter = highlighters[0];
 	let languages: LanguageList;
-  let themes: ThemeList;
+	let themes: ThemeList;
 	let language: string;
-  let theme: string;
+	let theme: string;
+	let extra: Record<string, string> | undefined;
 	let state: HighlightState = 'done';
+	let openaiKey = '';
 
 	$: {
 		initHighlighter(highlighter);
@@ -17,9 +24,14 @@
 
 	const initHighlighter = (highlighter: Highlighter) => {
 		languages = highlighter.getSupportedLanguages();
-    themes = highlighter.getThemes();
+		themes = highlighter.getThemes();
 		language = languages[0].language;
-    theme = themes[0].theme;
+		theme = themes[0].theme;
+		extra = undefined;
+	};
+
+	const handleOpenaiKeySubmit = () => {
+		extra = { openaiKey: `${openaiKey}` };
 	};
 
 	// Sample code from https://github.com/mdn/web-components-examples/blob/main/popup-info-box-web-component/main.js
@@ -116,17 +128,27 @@ customElements.define('popup-info', PopUpInfo);`;
 		{/each}
 	</select>
 
-  <select bind:value={theme}>
+	<select bind:value={theme}>
 		{#each themes as item}
 			<option value={item.theme}>{item.name}</option>
 		{/each}
 	</select>
 
+	{#if highlighter.name === 'GPT'}
+		<form on:submit|preventDefault={handleOpenaiKeySubmit}>
+			<input type="password" placeholder="OpenAI API key" bind:value={openaiKey} />
+			<button type="submit" disabled={!openaiKey || openaiKey === extra?.openaiKey}>
+        use this key
+      </button>
+		</form>
+	{/if}
+
 	<Highlight
 		{highlighter}
 		{language}
-    {theme}
+		{theme}
 		{code}
+		{extra}
 		on:changeState={(event) => (state = event.detail)}
 	/>
 </div>

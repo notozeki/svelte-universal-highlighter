@@ -11,17 +11,18 @@
 	export let highlighter: Highlighter;
 	export let code: string;
 	export let language: string;
-	export let theme: string | undefined = undefined;
+	export let theme: string;
+	export let extra: Record<string, string> | undefined = undefined;
 
 	let container: HTMLDivElement;
 	let template: HTMLTemplateElement;
 
-	$: {
+	$: if (!(highlighter.name === 'GPT' && !extra?.openaiKey)) {
 		dispatch('changeState', 'loading');
-		highlighter.highlight(code, language, theme).then(({ html, stylesheet }) => {
-			const codeElement = container.shadowRoot?.querySelector('code');
-			if (codeElement) {
-				codeElement.innerHTML = html;
+		highlighter.highlight(code, language, theme, extra).then(({ html, stylesheet }) => {
+			const divElement = container.shadowRoot?.querySelector('div');
+			if (divElement) {
+				divElement.innerHTML = html;
 			}
 			const styleElement = container.shadowRoot?.querySelector('style');
 			if (styleElement) {
@@ -42,10 +43,6 @@
 <div bind:this={container}>
 	<template bind:this={template}>
 		<style></style>
-		<pre
-			style="white-space: -moz-pre-wrap; 
-			white-space: -pre-wrap; 
-			white-space: -o-pre-wrap; 
-			white-space: pre-wrap;"><code /></pre>
+		<div />
 	</template>
 </div>

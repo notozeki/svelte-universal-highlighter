@@ -1,10 +1,9 @@
 import { Configuration, OpenAIApi } from 'openai';
 
 export type Token = { type: string; value: string };
-const OPENAI_KEY = import.meta.env.VITE_OPENAI_KEY;
 
-async function textCompletion(prompt:string) {
-  const configuration = new Configuration({ apiKey: OPENAI_KEY });
+async function textCompletion(apiKey: string, prompt:string) {
+  const configuration = new Configuration({ apiKey });
   const openai = new OpenAIApi(configuration);
   const request = {
     model: "text-davinci-003",
@@ -28,8 +27,8 @@ The response shouldn't contain code block notation around the CSV.
 <<code>>
 \`\`\`
 `;
-async function completeToken(prompt: string): Promise<Token[]> {
-  return textCompletion(prompt).then((res) => {
+async function completeToken(apiKey: string, prompt: string): Promise<Token[]> {
+  return textCompletion(apiKey, prompt).then((res) => {
     const csv = res.data.choices[0].text;
     if (!csv) return [];
     return csv.split("\n")
@@ -40,9 +39,9 @@ async function completeToken(prompt: string): Promise<Token[]> {
       .map((pair) => ({ type: pair[0], value: pair[1] }) as Token);
   });
 }
-export async function tokenize(code: string): Promise<Token[]> {
+export async function tokenize(apiKey: string, code: string): Promise<Token[]> {
   const prompt = PROMPT_TEMPLATE_TOKENIZE.replace('<<code>>', code);
-  const tokens = await completeToken(prompt);
+  const tokens = await completeToken(apiKey, prompt);
   return tokens;
 }
 
@@ -54,9 +53,9 @@ The response should be just lines of color codes and shouldn't contain code bloc
 
 <<code>>
 `;
-async function completeColor(tokenTypes: string[]): Promise<Record<string, string>> {
+async function completeColor(apiKey: string, tokenTypes: string[]): Promise<Record<string, string>> {
   const prompt = PROMPT_TEMPLATE_COLOR.replace('<<code>>', tokenTypes.join(","));
-  return textCompletion(prompt).then((res) => {
+  return textCompletion(apiKey, prompt).then((res) => {
     const colorsString = res.data.choices[0].text;
     if (!colorsString) return {};
     return Object.fromEntries(
@@ -66,7 +65,7 @@ async function completeColor(tokenTypes: string[]): Promise<Record<string, strin
   });
 }
 
-export async function generateColorMapping(tokenTypes: string[]): Promise<Record<string, string>> {
-  const colors = await completeColor(tokenTypes);
+export async function generateColorMapping(apiKey: string, tokenTypes: string[]): Promise<Record<string, string>> {
+  const colors = await completeColor(apiKey, tokenTypes);
   return colors;
 }
