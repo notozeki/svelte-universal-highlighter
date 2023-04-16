@@ -42,6 +42,10 @@
 <div bind:this={container}>
 	<template bind:this={template}>
 		<style></style>
-		<pre><code /></pre>
+		<pre
+			style="white-space: -moz-pre-wrap; 
+			white-space: -pre-wrap; 
+			white-space: -o-pre-wrap; 
+			white-space: pre-wrap;"><code /></pre>
 	</template>
 </div>
