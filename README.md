@@ -29,6 +29,6 @@ Enjoy! 😆
 
 ## 🧑‍💻 Developers
 
-* @tnzk
-* @notozeki
-* @kei-nishikawa48
+* [@tnzk](https://github.com/tnzk)
+* [@notozeki](https://github.com/notozeki)
+* [@kei-nishikawa48](https://github.com/kei-nishikawa48)
