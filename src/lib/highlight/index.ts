@@ -12,7 +12,12 @@ export interface Highlighter {
 	name: string;
 	getSupportedLanguages(): LanguageList;
 	getThemes(): ThemeList;
-	highlight(code: string, language: string, theme?: string): Promise<HighlightResult>;
+	highlight(
+		code: string,
+		language: string,
+		theme: string,
+		extra?: Record<string, string>
+	): Promise<HighlightResult>;
 }
 
 export function getHighlighters(): Highlighter[] {

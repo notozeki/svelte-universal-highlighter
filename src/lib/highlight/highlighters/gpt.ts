@@ -17,15 +17,20 @@ function getThemes(): ThemeList {
 async function highlight(
 	code: string,
 	_language: string,
-	theme?: string
+	theme: string,
+  extra?: Record<string, string>
 ): Promise<HighlightResult> {
-	const cacheKey = await sha1(code);
+  if (!extra?.openaiKey) {
+    throw new Error('No API key');
+  }
+
+  const cacheKey = await sha1(code);
 	const cached = tokenCache.get(cacheKey);
 	let tokens;
 	if (cached) {
 		tokens = cached;
 	} else {
-		tokens = await tokenize(code);
+		tokens = await tokenize(extra.openaiKey, code);
 		tokenCache.set(cacheKey, tokens);
 	}
 
@@ -46,13 +51,14 @@ async function highlight(
 	const html = `<pre><code>${highlighted}</pre></code>`;
 
 	const stylesheet = await getStylesheet(
+    extra.openaiKey,
 		tokens.map(({ type }) => type),
 		theme
 	);
 	return { html, stylesheet };
 }
 
-async function getStylesheet(tokenTypes: string[], theme: string = 'random'): Promise<string> {
+async function getStylesheet(apiKey: string, tokenTypes: string[], theme: string = 'random'): Promise<string> {
 	let mapping: Record<string, string> = {};
 	if (theme === 'random') {
 		for (const type of tokenTypes) {
@@ -61,7 +67,7 @@ async function getStylesheet(tokenTypes: string[], theme: string = 'random'): Pr
 			mapping[type] = `hsl(${hue}turn, ${saturation * 100}%, 50%)`;
 		}
 	} else if (theme === 'gpt') {
-		mapping = await generateColorMapping(tokenTypes);
+		mapping = await generateColorMapping(apiKey, tokenTypes);
 	}
 
 	return Object.keys(mapping)

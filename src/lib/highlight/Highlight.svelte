@@ -11,14 +11,15 @@
 	export let highlighter: Highlighter;
 	export let code: string;
 	export let language: string;
-	export let theme: string | undefined = undefined;
+	export let theme: string;
+	export let extra: Record<string, string> | undefined = undefined;
 
 	let container: HTMLDivElement;
 	let template: HTMLTemplateElement;
 
-	$: {
+	$: if (!(highlighter.name === 'GPT' && !extra?.openaiKey)) {
 		dispatch('changeState', 'loading');
-		highlighter.highlight(code, language, theme).then(({ html, stylesheet }) => {
+		highlighter.highlight(code, language, theme, extra).then(({ html, stylesheet }) => {
 			const divElement = container.shadowRoot?.querySelector('div');
 			if (divElement) {
 				divElement.innerHTML = html;

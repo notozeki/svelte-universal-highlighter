@@ -23,7 +23,7 @@ function getThemes(): ThemeList {
 	];
 }
 
-async function highlight(code: string, language: string, theme?: string): Promise<HighlightResult> {
+async function highlight(code: string, language: string, theme: string): Promise<HighlightResult> {
 	const grammer = Prism.languages[language];
 	if (!grammer) {
 		throw new Error(`Unsupported language: ${language}`);

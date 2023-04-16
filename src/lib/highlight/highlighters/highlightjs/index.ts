@@ -12,7 +12,7 @@ function getThemes(): ThemeList {
 	return themes;
 }
 
-async function highlight(code: string, language: string, theme?: string): Promise<HighlightResult> {
+async function highlight(code: string, language: string, theme: string): Promise<HighlightResult> {
 	const highlighted = hljs.highlight(code, { language }).value;
 	const html = `<pre><code class="hljs language-${language}">${highlighted}</code></pre>`;
 	const stylesheet = await getStylesheet(theme);
