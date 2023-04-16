@@ -42,7 +42,8 @@ async function highlight(
 	// 	{ type: 'punctuation', value: '{' }
 	// ];
 
-	const html = renderTokens(code, tokens);
+	const highlighted = renderTokens(code, tokens);
+	const html = `<pre><code>${highlighted}</pre></code>`;
 
 	const stylesheet = await getStylesheet(
 		tokens.map(({ type }) => type),

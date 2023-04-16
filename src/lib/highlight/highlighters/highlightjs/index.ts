@@ -1,5 +1,6 @@
 import hljs from 'highlight.js';
-import type { HighlightResult, Highlighter, LanguageList, ThemeList } from '..';
+import type { HighlightResult, Highlighter, LanguageList, ThemeList } from '../..';
+import { themes } from './themes';
 
 const stylesheetCache = new Map<string, string>();
 
@@ -8,11 +9,12 @@ function getSupportedLanguages(): LanguageList {
 }
 
 function getThemes(): ThemeList {
-	return [{ name: 'Default', theme: 'default' }];
+	return themes;
 }
 
 async function highlight(code: string, language: string, theme?: string): Promise<HighlightResult> {
-	const html = hljs.highlight(code, { language }).value;
+	const highlighted = hljs.highlight(code, { language }).value;
+	const html = `<pre><code class="hljs language-${language}">${highlighted}</code></pre>`;
 	const stylesheet = await getStylesheet(theme);
 	return { html, stylesheet };
 }
@@ -24,7 +26,7 @@ async function getStylesheet(theme: string = 'default'): Promise<string> {
 	}
 
 	const res = await fetch(
-		'https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/default.min.css'
+		`https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/${theme}.min.css`
 	);
 	if (res.ok) {
 		const stylesheet = await res.text();

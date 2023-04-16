@@ -19,9 +19,9 @@
 	$: {
 		dispatch('changeState', 'loading');
 		highlighter.highlight(code, language, theme).then(({ html, stylesheet }) => {
-			const codeElement = container.shadowRoot?.querySelector('code');
-			if (codeElement) {
-				codeElement.innerHTML = html;
+			const divElement = container.shadowRoot?.querySelector('div');
+			if (divElement) {
+				divElement.innerHTML = html;
 			}
 			const styleElement = container.shadowRoot?.querySelector('style');
 			if (styleElement) {
@@ -42,6 +42,6 @@
 <div bind:this={container}>
 	<template bind:this={template}>
 		<style></style>
-		<pre><code /></pre>
+		<div />
 	</template>
 </div>
