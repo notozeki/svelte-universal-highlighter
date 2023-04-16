@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	export type HighlightState = 'done' | 'loading';
+	export type HighlightState = 'done' | 'loading' | 'error';
 </script>
 
 <script lang="ts">
@@ -19,17 +19,23 @@
 
 	$: if (!(highlighter.name === 'GPT' && !extra?.openaiKey)) {
 		dispatch('changeState', 'loading');
-		highlighter.highlight(code, language, theme, extra).then(({ html, stylesheet }) => {
-			const divElement = container.shadowRoot?.querySelector('div');
-			if (divElement) {
-				divElement.innerHTML = html;
-			}
-			const styleElement = container.shadowRoot?.querySelector('style');
-			if (styleElement) {
-				styleElement.textContent = stylesheet;
-			}
-			dispatch('changeState', 'done');
-		});
+		highlighter
+			.highlight(code, language, theme, extra)
+			.then(({ html, stylesheet }) => {
+				const divElement = container.shadowRoot?.querySelector('div');
+				if (divElement) {
+					divElement.innerHTML = html;
+				}
+				const styleElement = container.shadowRoot?.querySelector('style');
+				if (styleElement) {
+					styleElement.textContent = stylesheet;
+				}
+				dispatch('changeState', 'done');
+			})
+			.catch((err) => {
+				console.error(err);
+				dispatch('changeState', 'error');
+			});
 	}
 
 	onMount(() => {

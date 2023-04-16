@@ -1,38 +1,34 @@
-# create-svelte
+# Svelte Universal Highlighter 💅
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+⚡️ Working demo: https://svelte-universal-highlighter.vercel.app/
 
-## Creating a project
+## ✍️ Description
 
-If you're seeing this, you've probably already done this step. Congrats!
+A syntax highlighter built with Svelte😘 It's "universal" because you can switch between highlighter implementations according to supported languages or preferred themes etc. Furthermore, you can even highlight codes in _unknown languages_, thanks to GPT!
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+### ✅ Supported highlighters
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+* [Prism](https://prismjs.com/) (12 languages[^1])
+* [highlight.js](https://highlightjs.org/) (192 languages)
+* GPT (∞ languages!)
+  * OpenAI's API key required.
 
-## Developing
+[^1]: Prism itself supports more languages, but we only support languages that are initially available due to [technical reason](https://github.com/PrismJS/prism/issues/1789).
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## 🏋️ Usage
 
-```bash
-npm run dev
+1. Go to [demo page](https://svelte-universal-highlighter.vercel.app/).
+1. Copy and paste the code you want to highlight in [**code**].
+1. Select implementation from [**highlighter**].
+  1. If you select [GPT], fill your key in [**OpenAI API key**].
+1. Select language of the code from [**langage**].
+1. Select preferred theme from [**theme**].
+1. You will get a beautiful output in [**preview**] :)
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+Enjoy! 😆
 
-## Building
+## 🧑‍💻 Developers
 
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+* [@tnzk](https://github.com/tnzk)
+* [@notozeki](https://github.com/notozeki)
+* [@kei-nishikawa48](https://github.com/kei-nishikawa48)

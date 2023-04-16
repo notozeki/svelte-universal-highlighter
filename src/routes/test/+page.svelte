@@ -138,9 +138,13 @@ customElements.define('popup-info', PopUpInfo);`;
 		<form on:submit|preventDefault={handleOpenaiKeySubmit}>
 			<input type="password" placeholder="OpenAI API key" bind:value={openaiKey} />
 			<button type="submit" disabled={!openaiKey || openaiKey === extra?.openaiKey}>
-        use this key
-      </button>
+				use this key
+			</button>
 		</form>
+	{/if}
+
+	{#if state === 'error'}
+		<div style="color: red">Error while highlighting.</div>
 	{/if}
 
 	<Highlight
