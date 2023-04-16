@@ -20,9 +20,8 @@ async function textCompletion(prompt:string) {
 }
 
 const PROMPT_TEMPLATE_TOKENIZE = `
-Tokenize this JavaScript program entirely for syntax highlighting.
+Tokenize this program entirely for syntax highlighting.
 and provide me with the result as CSV that consists two column of type and value.
-Include whitespaces and newlines as an entiry type = meta and value = " " and "\n" respectively.
 The response shouldn't contain code block notation around the CSV.
 
 \`\`\`
