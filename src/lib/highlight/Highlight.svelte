@@ -17,7 +17,7 @@
 	let container: HTMLDivElement;
 	let template: HTMLTemplateElement;
 
-	$: if (!(highlighter.name === 'GPT' && !extra?.openaiKey)) {
+	$: if (!(highlighter.name === 'GPT' && !extra)) {
 		dispatch('changeState', 'loading');
 		highlighter
 			.highlight(code, language, theme, extra)

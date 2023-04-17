@@ -18,13 +18,13 @@ async function highlight(
 	code: string,
 	_language: string,
 	theme: string,
-  extra?: Record<string, string>
+	extra?: Record<string, string>
 ): Promise<HighlightResult> {
-  if (!extra?.openaiKey) {
-    throw new Error('No API key');
-  }
+	if (extra?.openaiKey === undefined) {
+		throw new Error('No API key');
+	}
 
-  const cacheKey = await sha1(code);
+	const cacheKey = await sha1(code);
 	const cached = tokenCache.get(cacheKey);
 	let tokens;
 	if (cached) {
@@ -51,14 +51,18 @@ async function highlight(
 	const html = `<pre><code>${highlighted}</pre></code>`;
 
 	const stylesheet = await getStylesheet(
-    extra.openaiKey,
+		extra.openaiKey,
 		tokens.map(({ type }) => type),
 		theme
 	);
 	return { html, stylesheet };
 }
 
-async function getStylesheet(apiKey: string, tokenTypes: string[], theme: string = 'random'): Promise<string> {
+async function getStylesheet(
+	apiKey: string,
+	tokenTypes: string[],
+	theme: string = 'random'
+): Promise<string> {
 	let mapping: Record<string, string> = {};
 	if (theme === 'random') {
 		for (const type of tokenTypes) {

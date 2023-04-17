@@ -137,7 +137,7 @@ customElements.define('popup-info', PopUpInfo);`;
 	{#if highlighter.name === 'GPT'}
 		<form on:submit|preventDefault={handleOpenaiKeySubmit}>
 			<input type="password" placeholder="OpenAI API key" bind:value={openaiKey} />
-			<button type="submit" disabled={!openaiKey || openaiKey === extra?.openaiKey}>
+			<button type="submit" disabled={openaiKey === extra?.openaiKey}>
 				use this key
 			</button>
 		</form>
